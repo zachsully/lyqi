@@ -62,8 +62,8 @@
                             command
                             (shell-quote-argument basename)
                             ext)))
-      ;; (compilation-start command)
-      (start-process-shell-command "lyqi-command" "lyqi-result" command)
+      (start-process-shell-command "lyqi-command" "*lyqi-result*" command)
+      (display-buffer "*lyqi-result*")
       )))
 
 (defun lyqi:compile-ly ()
