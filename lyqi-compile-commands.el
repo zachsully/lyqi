@@ -62,8 +62,10 @@
                             command
                             (shell-quote-argument basename)
                             ext)))
-      (start-process-shell-command "lyqi-command" "*lyqi-result*" command)
-      (display-buffer "*lyqi-result*")
+      (start-process-shell-command "lyqi-command" "*lyqi-proc*" command)
+      (display-buffer-at-bottom
+       (get-buffer-create "*lyqi-proc*")
+       '((window-height . 10)))
       )))
 
 (defun lyqi:compile-ly ()
