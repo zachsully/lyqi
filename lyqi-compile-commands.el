@@ -52,32 +52,41 @@
 ;;; LilyPond compilation
 ;;;
 
-(defun lyqi:compile-command (command ext)
-  (when (lyqi:master-file)
-    (let* ((pathname (file-truename (lyqi:master-file)))
+(defun command-string (command ext)
+  (let* ((pathname (file-truename (lyqi:master-file)))
            (directory (file-name-directory pathname))
-           (basename (file-name-sans-extension (file-name-nondirectory pathname)))
-           (command (format "cd %s; %s %s.%s"
-                            (shell-quote-argument directory)
-                            command
-                            (shell-quote-argument basename)
-                            ext)))
-      (start-process-shell-command "lyqi-command" "*lyqi-proc*" command)
-      (display-buffer-at-bottom
-       (get-buffer-create "*lyqi-proc*")
-       '((window-height . 10)))
-      )))
+           (basename (file-name-sans-extension (file-name-nondirectory pathname))))
+    (format "cd %s; %s %s.%s"
+            (shell-quote-argument directory)
+            command
+            (shell-quote-argument basename)
+            ext)))
 
 (defun lyqi:compile-ly ()
   (interactive)
-  (lyqi:compile-command lyqi:lilypond-command "ly"))
+  (start-process-shell-command
+   "lyqi-compile"
+   "*lyqi-compile*"
+   (command-string lyqi:lilypond-command "ly"))
+  (display-buffer-at-bottom
+   (get-buffer-create "*lyqi-compile*")
+   '((window-height . 10))))
 
 (defun lyqi:open-pdf ()
   (interactive)
-  (lyqi:compile-command lyqi:pdf-command "pdf"))
+  (start-process-shell-command
+   "lyqi-pdf"
+   nil
+   (command-string lyqi:pdf-command "pdf")))
 
 (defun lyqi:open-midi ()
   (interactive)
-  (lyqi:compile-command lyqi:midi-command "midi"))
+  (start-process-shell-command
+   "lyqi-midi"
+   "*lyqi-midi*"
+   (command-string lyqi:midi-command "midi"))
+  (display-buffer-at-bottom
+   (get-buffer-create "*lyqi-compile*")
+   '((window-height . 10))))
 
 (provide 'lyqi-compile-commands)
